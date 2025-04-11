@@ -1,5 +1,5 @@
 // api/getApod.ts
-import type { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import dotenv from 'dotenv';
 
 // Ensure environment variables are loaded
@@ -16,7 +16,7 @@ interface ApodData {
   copyright?: string;
 }
 
-export default async function handler(request: Request, response: Response) {
+export default async function handler(request: VercelRequest, response: VercelResponse) {
   // Log all environment variables for debugging
   console.log('In getApod handler, environment check:');
   console.log('NASA_API_KEY exists:', !!process.env.NASA_API_KEY);

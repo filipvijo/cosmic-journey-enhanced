@@ -1,5 +1,5 @@
 // Use 'any' for request/response types to avoid Vercel deployment issues
-import type { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // --- Keep dotenv workaround for local dev ---
 
@@ -20,7 +20,7 @@ interface AstrologyInfo {
 }
 
 // Handler function for the API endpoint
-export default async function handler(request: Request, response: Response) {
+export default async function handler(request: VercelRequest, response: VercelResponse) {
     const { planet } = request.query;
     const apiKey = process.env.OPENAI_API_KEY;
 

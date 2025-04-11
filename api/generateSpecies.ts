@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as fal from '@fal-ai/serverless-client';
 
 interface SpeciesInfo {
@@ -47,7 +47,7 @@ if (process.env.FAL_KEY) {
     console.log('Fal.ai client initialized with API key');
 }
 
-export default async function handler(request: Request, response: Response) {
+export default async function handler(request: VercelRequest, response: VercelResponse) {
     const { planet } = request.query;
     const openAIApiKey = process.env.OPENAI_API_KEY;
 

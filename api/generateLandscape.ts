@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as fal from '@fal-ai/serverless-client'; 
 
 // Ensure FAL_KEY is handled if needed, though fal library might handle it implicitly via env
@@ -28,7 +28,7 @@ interface FalQueueUpdate {
     // Add other potential fields from the update object if known
 }
 
-export default async function handler(request: Request, response: Response) { 
+export default async function handler(request: VercelRequest, response: VercelResponse) { 
     const { planet } = request.query;
     // Fal client uses FAL_KEY from environment automatically if configured correctly
     // const apiKey = process.env.FAL_KEY;

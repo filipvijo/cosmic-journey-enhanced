@@ -1,5 +1,5 @@
 // TEMPORARY TEST api/getNasaImages.ts
-import type { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 interface NASAImage {
     url: string;
@@ -27,7 +27,7 @@ function shuffleArray(array: any[]) {
     return array;
 }
 
-export default async function handler(request: Request, response: Response) {
+export default async function handler(request: VercelRequest, response: VercelResponse) {
     const { planet } = request.query;
     const apiKey = process.env.NASA_API_KEY;
 

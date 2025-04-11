@@ -13,9 +13,9 @@ interface OpenAIChatResponse {
   error?: { message: string; type: string }; // Include error field potentially
 }
 
-import type { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default async function handler(request: Request, response: Response) {
+export default async function handler(request: VercelRequest, response: VercelResponse) {
   const { planet } = request.query;
   const apiKey = process.env.OPENAI_API_KEY;
 

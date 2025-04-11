@@ -8,7 +8,7 @@ function shuffleArray(array: any[]) {
 }
 // --- ---
 
-import type { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 interface YouTubeVideo {
     videoId: string;
@@ -33,7 +33,7 @@ interface YouTubeSearchItem {
     };
 }
 
-export default async function handler(request: Request, response: Response) {
+export default async function handler(request: VercelRequest, response: VercelResponse) {
     const { planet } = request.query;
     const apiKey = process.env.YOUTUBE_API_KEY;
 
