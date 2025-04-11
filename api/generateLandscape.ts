@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import * as fal from '@fal-ai/serverless-client'; 
+const fal = require('@fal-ai/serverless-client'); 
 
 // Ensure FAL_KEY is handled if needed, though fal library might handle it implicitly via env
 if (!process.env.FAL_KEY) {

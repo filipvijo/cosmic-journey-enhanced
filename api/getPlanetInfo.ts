@@ -42,4 +42,4 @@ export default async function handler(request: VercelRequest, response: VercelRe
     console.error(`Serverless: Error in function for ${planet}:`, error);
     response.status(500).json({ error: 'Internal Server Error' });
   }
-};
+}

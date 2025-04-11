@@ -1,3 +1,5 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
 // --- Helper function for shuffling ---
 function shuffleArray(array: any[]) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -6,9 +8,6 @@ function shuffleArray(array: any[]) {
   }
   return array;
 }
-// --- ---
-
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 interface YouTubeVideo {
     videoId: string;

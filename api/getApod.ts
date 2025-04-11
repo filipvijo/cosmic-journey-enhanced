@@ -1,6 +1,6 @@
 // api/getApod.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 
 // Ensure environment variables are loaded
 dotenv.config();

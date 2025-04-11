@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import * as fal from '@fal-ai/serverless-client';
+const fal = require('@fal-ai/serverless-client');
 
 interface SpeciesInfo {
     category: 'Micro-organism' | 'Animal' | 'Humanoid';
