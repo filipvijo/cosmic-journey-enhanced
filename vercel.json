@@ -5,7 +5,8 @@
   "framework": "vite",
   "functions": {
     "api/*.ts": {
-      "runtime": "@vercel/node@2.15.10"
+      "runtime": "@vercel/node@2.15.10",
+      "memory": 1024
     }
   },
   "rewrites": [
