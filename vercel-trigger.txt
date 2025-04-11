@@ -1,0 +1,2 @@
+This file is created to trigger a Vercel deployment.
+Timestamp: 2025-04-11T12:33:14+02:00
