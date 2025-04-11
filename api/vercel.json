@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/*.ts": {
+      "runtime": "nodejs18.x",
+      "memory": 1024
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

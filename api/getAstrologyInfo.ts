@@ -12,6 +12,14 @@ interface OpenAIResponse {
     error?: { message: string };
 }
 
+// Define the type for astrological information
+interface AstrologyInfo {
+  meaning: string;
+  traits: string[];
+  compatibility: string[];
+}
+
+// Handler function for the API endpoint
 export default async function handler(request: Request, response: Response) {
     const { planet } = request.query;
     const apiKey = process.env.OPENAI_API_KEY;
