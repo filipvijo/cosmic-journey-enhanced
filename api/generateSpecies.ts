@@ -1,7 +1,7 @@
 // Use import for Vercel types
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-// Use import for fal client
-import fal from '@fal-ai/serverless-client';
+// Use namespace import for fal client
+import * as fal from '@fal-ai/serverless-client';
 
 interface SpeciesInfo {
     category: 'Micro-organism' | 'Animal' | 'Humanoid';

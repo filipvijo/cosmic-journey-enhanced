@@ -1,7 +1,7 @@
 // Use import for Vercel types
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-// Use import for fal client
-import fal from '@fal-ai/serverless-client';
+// Use namespace import for fal client
+import * as fal from '@fal-ai/serverless-client';
 
 // Ensure FAL_KEY is handled if needed, though fal library might handle it implicitly via env
 if (!process.env.FAL_KEY) {
