@@ -1,6 +1,6 @@
-# --- Allow compiled API files ---
-!/api/**/*.js
-!/api/**/*.js.map
+# --- Ignore compiled API files ---
+/api/**/*.js
+/api/**/*.js.map
 
 # Dependencies
 /node_modules

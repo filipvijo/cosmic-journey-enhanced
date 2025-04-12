@@ -1,20 +1,17 @@
 {
   "compilerOptions": {
-    "composite": true,
+    // "composite": true, // No longer needed
     "skipLibCheck": true,
     "target": "ES2020",
-    "module": "NodeNext", // Crucial for ESM output
-    "moduleResolution": "NodeNext", // Crucial for ESM resolution
-    // --- Output JS files next to TS files ---
-    "outDir": "./",
-    // --- Remove rootDir ---
-    // "rootDir": "api",
+    "module": "NodeNext", // Keep: Crucial for ESM output
+    "moduleResolution": "NodeNext", // Keep: Crucial for ESM resolution
+    // "outDir": "./", // No longer compiling separately
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "sourceMap": true, // Keep source maps for debugging
+    "sourceMap": true,
     "resolveJsonModule": true
   },
-  "include": ["api/**/*.ts"], // Compile only files in api folder
-  "exclude": ["node_modules", "api/server.ts"] // Exclude server.ts
+  "include": ["api/**/*.ts"],
+  "exclude": ["node_modules", "api/server.ts"]
 }
