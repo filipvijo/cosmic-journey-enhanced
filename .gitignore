@@ -1,3 +1,7 @@
+# --- Allow compiled API files ---
+!/api/**/*.js
+!/api/**/*.js.map
+
 # Dependencies
 /node_modules
 
@@ -38,3 +42,6 @@ Thumbs.db
 
 # Local settings
 *.local
+
+# --- Avoid ignoring all JS files if possible ---
+# *.js # REMOVE or comment out this general rule if it exists

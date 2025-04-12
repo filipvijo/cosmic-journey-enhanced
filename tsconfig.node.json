@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
-    "composite": true, // Often used in monorepo setups or with tsconfig.json referencing this
+    "composite": true,
     "skipLibCheck": true,
-    // --- Key Settings for Node.js ESM ---
-    "target": "ES2020", // Target modern ES features
-    "module": "NodeNext", // Use Node.js's modern module system resolution
-    "moduleResolution": "NodeNext", // Align module resolution
-    "outDir": "dist-api", // Separate output directory for API code (optional but clean)
-    "rootDir": "api", // Specify the root of your API source files
-    // --- End Key Settings ---
-    "esModuleInterop": true, // Allows default imports from CommonJS modules
+    "target": "ES2020",
+    "module": "NodeNext", // Crucial for ESM output
+    "moduleResolution": "NodeNext", // Crucial for ESM resolution
+    // --- Output JS files next to TS files ---
+    "outDir": "./",
+    // --- Remove rootDir ---
+    // "rootDir": "api",
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true, // Enable strict type checking
-    "sourceMap": true, // Generate source maps for debugging
-    "resolveJsonModule": true // Allow importing JSON files
+    "strict": true,
+    "sourceMap": true, // Keep source maps for debugging
+    "resolveJsonModule": true
   },
-  "include": ["api/**/*.ts"], // Include only your API source files
-  "exclude": ["node_modules", "api/server.ts"]
+  "include": ["api/**/*.ts"], // Compile only files in api folder
+  "exclude": ["node_modules", "api/server.ts"] // Exclude server.ts
 }
