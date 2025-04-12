@@ -96,7 +96,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
         Respond ONLY with a valid JSON array containing three objects. Each object must have keys: "category" (string: "Micro-organism", "Animal", or "Humanoid"), "name" (string), and "description" (string). Example object: {"category": "Animal", "name": "Rock-Skimmer", "description": "..."}`;
 
         const openAIRequestBody = {
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o-mini",
             messages: [{ role: "user", content: openAIPrompt }],
             temperature: 0.8,
             max_tokens: 1000
@@ -201,8 +201,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
             };
 
             console.log(`Generate Species: Submitting Fal.ai request for "${species.name}" with input:`, JSON.stringify(falInput, null, 2));
-            // Use a more reliable model ID for image generation
-            const modelId = "fal-ai/fast-sdxl";
+            // --- Change the model ID to use FLUX ---
+            const modelId = "fal-ai/flux/dev";
             return fal.subscribe(modelId, {
                 input: falInput,
                 logs: true,

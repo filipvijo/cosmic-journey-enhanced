@@ -44,6 +44,19 @@ html, #root {
    padding: 0;
 }
 
+/* --- Global styles for background and centering --- */
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Remove background image from here */
+  font-family: sans-serif;
+}
+
 /* Update headings to use variable */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
@@ -57,9 +70,11 @@ button {
 
 /* Update App to use variable */
 .App {
-  position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: var(--bg-color); /* Use variable */
   overflow: hidden;
 }

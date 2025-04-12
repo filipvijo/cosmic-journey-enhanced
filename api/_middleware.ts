@@ -1,19 +1,24 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // Express middleware for API routes
-export default function middleware(req: Request, res: Response, next: NextFunction) {
+export default function middleware(req: VercelRequest, res: VercelResponse, next?: () => void) {
   // Log the request for debugging
   console.log(`API Request: ${req.method} ${req.url}`);
   
   // Allow CORS
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
   // Handle OPTIONS method
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
   
-  next();
+  // Call next if provided (may not be available in all Vercel contexts)
+  if (next) {
+    next();
+  }
+  
+  return;
 }

@@ -1,0 +1,121 @@
+.apod-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: rgba(0, 170, 255, 0.7); /* Accent color, semi-transparent */
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: bold;
+  z-index: 10; /* Ensure it's above the canvas */
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  backdrop-filter: blur(3px); /* Optional: blur background behind button */
+}
+
+.apod-button:hover:not(:disabled) {
+  background-color: rgba(51, 204, 255, 0.8); /* Brighter accent on hover */
+}
+
+.apod-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.apod-button:disabled {
+  background-color: rgba(100, 100, 100, 0.5);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Modal Styles */
+.apod-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* High z-index */
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.apod-modal-content {
+  background-color: #1a1a2e; /* Dark background for modal */
+  color: #e0e0e0;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 5px 25px rgba(0, 170, 255, 0.3);
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.apod-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 2em;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.apod-modal-close:hover {
+  color: #fff;
+}
+
+.apod-modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  color: #00aaff; /* Accent color for title */
+  font-size: 1.8em;
+}
+
+.apod-modal-date {
+  font-size: 0.9em;
+  color: #aaa;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.apod-modal-image {
+  display: block;
+  max-width: 100%;
+  max-height: 60vh; /* Limit image height */
+  margin: 0 auto 20px auto;
+  border-radius: 5px;
+  border: 1px solid #333;
+}
+
+.apod-modal-video {
+  display: block;
+  width: 100%;
+  max-width: 800px; /* Limit video width */
+  height: 450px; /* Fixed aspect ratio */
+  max-height: 60vh;
+  margin: 0 auto 20px auto;
+  border-radius: 5px;
+  border: 1px solid #333;
+}
+
+.apod-modal-explanation {
+  font-size: 1em;
+  line-height: 1.6;
+  text-align: justify;
+}

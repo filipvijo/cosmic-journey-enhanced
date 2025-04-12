@@ -4,12 +4,19 @@ import * as fal from '@fal-ai/serverless-client';
 // Ensure FAL_KEY is handled if needed, though fal library might handle it implicitly via env
 if (!process.env.FAL_KEY) {
     console.warn('FAL_KEY environment variable not set. Fal AI client might rely on other auth methods or fail.');
+} else {
+    // Initialize Fal.ai client with API key
+    fal.config({
+        credentials: process.env.FAL_KEY
+    });
+    console.log('Fal.ai client initialized with API key');
 }
 
 // Input type for fal.subscribe (ensure properties match the model's requirements)
 interface FalSubscribeInput {
     prompt: string;
-    image_size?: string | { width: number; height: number }; 
+    width?: number;
+    height?: number;
     // model_name?: string; 
     // Add other valid params from docs if needed
     // negative_prompt?: string;
@@ -25,6 +32,7 @@ interface FalResponse {
 interface FalQueueUpdate {
     status: string;
     logs?: { message: string }[];
+    message?: string;
     // Add other potential fields from the update object if known
 }
 
@@ -73,23 +81,29 @@ export default async function handler(request: VercelRequest, response: VercelRe
     }
     // --- End Conditional Prompt ---
 
-    console.log(`Generate Landscape: Calling Fal.ai subscribe for ${planet} with model fal-ai/flux/dev`);
+    console.log(`Generate Landscape: Calling Fal.ai for ${planet} with input:`);
 
     try {
         const falInput: FalSubscribeInput = {
             prompt: prompt,
-            image_size: "landscape_16_9", 
-            // Add other parameters like negative_prompt if the model supports it
+            width: 1024,
+            height: 576
         };
 
-        const result = await fal.subscribe("fal-ai/flux/dev", { 
+        console.log(JSON.stringify(falInput, null, 2));
+        
+        // Use a more reliable model ID for image generation (same as in generateSpecies.ts)
+        const modelId = "fal-ai/fast-sdxl";
+        const result = await fal.subscribe(modelId, { 
             input: falInput,
             logs: true, 
             onQueueUpdate: (update: FalQueueUpdate) => {
-                if (update.status === "IN_PROGRESS" && update.logs) {
-                    update.logs.map((log: { message: string }) => log.message).forEach((msg: string) => console.log(`Fal Progress (${planet}):`, msg));
+                const logPrefix = `Fal Status (${planet}, ${modelId})`;
+                if (update.status === "IN_PROGRESS" && update.logs && update.logs.length > 0) {
+                    update.logs.forEach((log: { message: string }) => console.log(`${logPrefix} [Log]:`, log.message));
+                } else {
+                    console.log(`${logPrefix}: ${update.status}`, update.message || '');
                 }
-                // Optionally handle other statuses: COMPLETED, FAILED, etc.
             },
         }) as FalResponse; 
 

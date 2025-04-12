@@ -12,7 +12,7 @@ import getApod from './getApod';
 
 // Explicitly point to the .env file in the parent directory (project root)
 // dotenv.config({ path: '../.env' }); // Path relative to this file
-dotenv.config(); // Default behavior: load .env from CWD
+dotenv.config(); // Default behavior: load .env from CWD (Current Working Directory)
 
 // Log environment variables to verify they're loaded
 console.log('Environment variables loaded:');
@@ -22,11 +22,11 @@ console.log('YOUTUBE_API_KEY exists:', !!process.env.YOUTUBE_API_KEY);
 console.log('FAL_KEY exists:', !!process.env.FAL_KEY);
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3001; // Configured to use port 3001 by default
 
 // Configure CORS to allow requests from all origins
 app.use(cors({
-  origin: '*',
+  origin: '*', // Allows all origins - okay for dev, might restrict in production
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -59,6 +59,6 @@ app.get('/api/generateLandscape', wrapHandler(generateLandscape));
 app.get('/api/generateSpecies', wrapHandler(generateSpecies));
 app.get('/api/getApod', wrapHandler(getApod));
 
-app.listen(port, () => {
+app.listen(port, () => { // Listens on the configured port (3001 by default)
   console.log(`API server running on port ${port}`);
 });

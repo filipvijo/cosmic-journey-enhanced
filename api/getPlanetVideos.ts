@@ -61,11 +61,16 @@ export default async function handler(request: VercelRequest, response: VercelRe
         if (!apiResponse.ok) {
             const errorData = await apiResponse.json();
             console.error(`YouTube API Error: ${apiResponse.status}`, errorData);
-            throw new Error(`Failed to fetch videos from YouTube API. Status: ${apiResponse.status}`);
+            console.log(`YouTube Videos: API call failed. Returning empty array.`);
+            return response.status(200).json({ videos: [] }); // Return empty on API error
         }
 
         const data = await apiResponse.json() as YouTubeSearchResponse; // Use type assertion
         const items = data?.items;
+
+        // --- Add logging for raw items ---
+        console.log(`YouTube Videos: Raw items received:`, JSON.stringify(items, null, 2));
+        // --- End logging ---
 
         if (!items || items.length === 0) {
             console.log(`YouTube Videos: No results found for ${planet}.`);
@@ -95,8 +100,6 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
     } catch (error: any) {
         console.error("YouTube Videos: Error occurred", error);
-        return response.status(500).json({ 
-            error: error.message || 'Internal server error while fetching YouTube videos'
-        });
+        return response.status(200).json({ videos: [] }); 
     }
 }

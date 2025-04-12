@@ -1,259 +1,288 @@
-import { useState } from 'react'; 
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stars /*, HemisphereLight*/ } from '@react-three/drei'; // Remove HemisphereLight
-import * as THREE from 'three'; // Ensure three.js is imported
-import { SolarSystemScene } from './components/SolarSystemScene.js';
-import { PlanetDetailView } from './components/PlanetDetailView.js';
-import { ApodModal } from './components/ApodModal';
+import { useState, useCallback, useEffect, ReactNode } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+// --- Remove Canvas import if not used directly here ---
+// import { Canvas } from '@react-three/fiber';
+import { SolarSystemScene } from './components/SolarSystemScene';
+import { PlanetDetailView } from './components/PlanetDetailView';
+// --- Uncomment AuthProvider and useAuth ---
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { LoginPage } from './pages/LoginPage';
 import './App.css';
+import './ApodModal.css'; // Create this CSS file later
 
-function App() {
-  const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
-  const [apodData, setApodData] = useState<any>(null); // Use the ApodData interface here too
+// --- Add APOD Data Interface ---
+interface ApodData {
+  title: string;
+  explanation: string;
+  url: string;
+  hdurl?: string;
+  media_type: 'image' | 'video';
+  date: string;
+  copyright?: string;
+}
+// --- End APOD Data Interface ---
+
+// --- Uncomment fetch functions ---
+const fetchPlanetInfo = async (planet: string, setPlanetInfo: Function, setIsLoading: Function, setError: Function) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+        const response = await fetch(`/api/getPlanetInfo?planet=${planet}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setPlanetInfo(data);
+    } catch (e: any) {
+        setError(e.message || 'Failed to fetch planet info');
+        setPlanetInfo(null);
+    } finally {
+        setIsLoading(false);
+    }
+};
+const fetchPlanetDescription = async (planet: string, setPlanetDescription: Function, setIsDescriptionLoading: Function, setDescriptionError: Function) => {
+    setIsDescriptionLoading(true);
+    setDescriptionError(null);
+     try {
+        const response = await fetch(`/api/getPlanetDescription?planet=${planet}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setPlanetDescription(data.description);
+    } catch (e: any) {
+        setDescriptionError(e.message || 'Failed to fetch planet description');
+        setPlanetDescription('');
+    } finally {
+        setIsDescriptionLoading(false);
+    }
+};
+const fetchNasaImages = async (planet: string, setNasaImages: Function, setIsImagesLoading: Function, setImagesError: Function) => {
+    setIsImagesLoading(true);
+    setImagesError(null);
+     try {
+        const response = await fetch(`/api/getNasaImages?planet=${planet}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setNasaImages(data.images || []);
+    } catch (e: any) {
+        setImagesError(e.message || 'Failed to fetch NASA images');
+        setNasaImages([]);
+    } finally {
+        setIsImagesLoading(false);
+    }
+};
+// --- End fetch functions ---
+
+
+// --- Uncomment PlanetDetailWrapper ---
+function PlanetDetailWrapper() {
+    const { planetName } = useParams<{ planetName: string }>();
+    const navigate = useNavigate();
+
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [planetInfo, setPlanetInfo] = useState<any>(null);
+    const [nasaImages, setNasaImages] = useState<any[]>([]);
+    const [isImagesLoading, setIsImagesLoading] = useState<boolean>(true);
+    const [imagesError, setImagesError] = useState<string | null>(null);
+    const [planetDescription, setPlanetDescription] = useState<string>('');
+    const [isDescriptionLoading, setIsDescriptionLoading] = useState<boolean>(true);
+    const [descriptionError, setDescriptionError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (planetName) {
+            console.log(`Wrapper: Fetching all data for ${planetName}`);
+            fetchPlanetInfo(planetName, setPlanetInfo, setIsLoading, setError);
+            fetchPlanetDescription(planetName, setPlanetDescription, setIsDescriptionLoading, setDescriptionError);
+            fetchNasaImages(planetName, setNasaImages, setIsImagesLoading, setImagesError);
+        }
+    }, [planetName]);
+
+
+    const handleBackToSolarSystem = useCallback(() => {
+        navigate('/');
+    }, [navigate]);
+
+    if (!planetName) {
+        return <Navigate to="/" />;
+    }
+
+    return (
+        <PlanetDetailView
+            selectedPlanet={planetName}
+            onBack={handleBackToSolarSystem}
+            planetInfo={planetInfo}
+            isLoading={isLoading}
+            error={error}
+            nasaImages={nasaImages}
+            isImagesLoading={isImagesLoading}
+            imagesError={imagesError}
+            planetDescription={planetDescription}
+            isDescriptionLoading={isDescriptionLoading}
+            descriptionError={descriptionError}
+        />
+    );
+}
+// --- End Wrapper ---
+
+
+// --- Uncomment Protected Route component ---
+interface ProtectedRouteProps {
+  children: ReactNode;
+}
+
+function ProtectedRoute({ children }: { children: JSX.Element }) {
+  const { currentUser, loading } = useAuth();
+
+  // --- Add Logging ---
+  console.log('ProtectedRoute: Checking auth state. Loading:', loading, 'CurrentUser:', !!currentUser);
+  // --- End Logging ---
+
+  if (loading) {
+    console.log('ProtectedRoute: Still loading auth state...');
+    return <div>Loading...</div>; // Show a loading indicator while checking auth state
+  }
+
+  if (!currentUser) {
+    console.log('ProtectedRoute: No user found. Redirecting to /login.');
+    return <Navigate to="/login" />;
+  }
+
+  // --- Add Logging ---
+  console.log('ProtectedRoute: User found. Rendering children.');
+  // --- End Logging ---
+  return children;
+}
+// --- End Protected Route ---
+
+
+// --- Restore AppContent ---
+function AppContent() {
+  // --- Uncomment useAuth ---
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
+  // --- Add APOD State ---
+  const [apodData, setApodData] = useState<ApodData | null>(null);
   const [isApodLoading, setIsApodLoading] = useState<boolean>(false);
   const [apodError, setApodError] = useState<string | null>(null);
   const [showApodModal, setShowApodModal] = useState<boolean>(false);
+  // --- End APOD State ---
 
-  const fetchApodData = async () => {
-    console.log("Fetching APOD data...");
-    setIsApodLoading(true);
-    setApodError(null);
-    try {
-        // Get NASA API key from .env file or use a demo key
-        // Try direct NASA API call to bypass backend issues
-        const NASA_API_KEY = 'DEMO_KEY'; // NASA allows limited requests with DEMO_KEY
-        const NASA_APOD_URL = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`;
-        
-        console.log("Fetching APOD directly from NASA API:", NASA_APOD_URL);
-        const response = await fetch(NASA_APOD_URL);
-        console.log("APOD response status:", response.status);
-        
+  const handlePlanetSelect = useCallback((planetName: string) => {
+    // --- Restore navigation ---
+    navigate(`/planet/${planetName}`);
+    // console.log("Planet selected (navigation disabled):", planetName); // Remove test log
+  }, [navigate]);
+
+  // --- Add useEffect to fetch APOD ---
+  useEffect(() => {
+    const fetchApod = async () => {
+      setIsApodLoading(true);
+      setApodError(null);
+      try {
+        const response = await fetch('/api/getApod');
         if (!response.ok) {
-            let errorMsg = `APOD Fetch error! Status: ${response.status}`;
-            try { 
-                const errorText = await response.text();
-                console.log("APOD error response:", errorText);
-                try {
-                    const errorData = JSON.parse(errorText);
-                    errorMsg = errorData.error || errorData.msg || errorMsg;
-                } catch (parseError) {
-                    errorMsg = `${errorMsg} - ${errorText}`;
-                }
-            } catch (e) {
-                console.error("Could not parse error response:", e);
-            }
-            throw new Error(errorMsg);
+          const errorData = await response.json();
+          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
-        
-        const data = await response.json();
-        console.log("APOD data received:", data);
-        setApodData(data); // Store the fetched data
-        return data; // Return data for handler
-    } catch (e: any) {
-        console.error("Failed to fetch APOD data:", e);
-        setApodError(`Failed to load Picture of the Day. (${e.message})`);
-        return null; // Indicate failure
-    } finally {
+        const data: ApodData = await response.json();
+        setApodData(data);
+      } catch (e: any) {
+        console.error("Failed to fetch APOD:", e);
+        setApodError(e.message || 'Failed to fetch Picture of the Day');
+      } finally {
         setIsApodLoading(false);
-    }
-  };
-
-  const handleApodButtonClick = async () => {
-    let currentApodData = apodData;
-    if (!currentApodData) {
-        currentApodData = await fetchApodData();
-    }
-    if (currentApodData) {
-        setShowApodModal(true);
-    } else {
-        if (!isApodLoading) {
-            alert(`Could not load Picture of the Day. ${apodError || 'Please try again.'}`);
-        }
-    }
-  };
-
-  const fetchPlanetInfo = async (planetName: string) => {
-    setIsLoading(true);
-    setPlanetInfo(null);
-    setError(null);
-    
-    try {
-      console.log(`Fetching info for planet: ${planetName}`);
-      
-      // Try the API endpoint first
-      const response = await fetch(`/api/getPlanetInfo?planet=${planetName}`);
-      
-      // If API fails, use direct external API call as fallback
-      if (!response.ok) {
-        console.log('API endpoint failed, using direct external API call');
-        const planetApiName = planetName.toLowerCase();
-        const EXTERNAL_API_URL = `https://api.le-systeme-solaire.net/rest/bodies/${planetApiName}`;
-        
-        const directResponse = await fetch(EXTERNAL_API_URL);
-        if (!directResponse.ok) {
-          throw new Error(`Failed to fetch planet data: ${directResponse.status}`);
-        }
-        
-        const data = await directResponse.json();
-        setPlanetInfo(data);
-      } else {
-        const data = await response.json();
-        setPlanetInfo(data);
       }
-    } catch (error: any) {
-      console.error("Error fetching planet info:", error);
-      setError(`Failed to load data for ${planetName}. (${error.message})`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
-  const fetchNasaImages = async (planetName: string) => {
-    setIsImagesLoading(true);
-    setNasaImages([]);
-    setImagesError(null);
-    
-    try {
-      console.log(`Fetching NASA images for: ${planetName}`);
-      
-      // Try the API endpoint first
-      const response = await fetch(`/api/getNasaImages?planet=${planetName}`);
-      
-      // If API fails, use direct NASA API call as fallback
-      if (!response.ok) {
-        console.log('API endpoint failed, using direct NASA API call');
-        const NASA_API_KEY = 'DEMO_KEY'; // NASA allows limited requests with DEMO_KEY
-        const NASA_IMAGES_URL = `https://images-api.nasa.gov/search?q=${planetName}&media_type=image`;
-        
-        const directResponse = await fetch(NASA_IMAGES_URL);
-        if (!directResponse.ok) {
-          throw new Error(`NASA Image Fetch error! Status: ${directResponse.status}`);
-        }
-        
-        const data = await directResponse.json();
-        
-        // Process the NASA API response
-        const images = data.collection?.items?.slice(0, 6).map((item: any) => ({
-          url: item.links?.[0]?.href || '',
-          title: item.data?.[0]?.title || 'NASA Image',
-          description: item.data?.[0]?.description || ''
-        })) || [];
-        
-        setNasaImages(images);
-      } else {
-        const data = await response.json();
-        setNasaImages(data);
-      }
-    } catch (error: any) {
-      console.error("Error fetching NASA images:", error);
-      setImagesError(`Failed to load NASA images. (${error.message})`);
-    } finally {
-      setIsImagesLoading(false);
-    }
-  };
-
-  const fetchPlanetDescription = async (planetName: string) => {
-    setIsDescriptionLoading(true);
-    setPlanetDescription('');
-    setDescriptionError(null);
-    
-    try {
-      console.log(`Fetching description for: ${planetName}`);
-      
-      // Try the API endpoint
-      const response = await fetch(`/api/getPlanetDescription?planet=${planetName}`);
-      
-      // If API fails, use a fallback description
-      if (!response.ok) {
-        console.log('API endpoint failed, using fallback description');
-        
-        // Fallback descriptions for common planets
-        const fallbackDescriptions: {[key: string]: string} = {
-          'Mercury': 'Mercury is the smallest and innermost planet in the Solar System. It has no atmosphere to retain heat, causing extreme temperature variations, from scorching 800°F (430°C) during the day to freezing -290°F (-180°C) at night. Its heavily cratered surface resembles our Moon.',
-          'Venus': 'Venus is often called Earth\'s sister planet due to similar size and mass. However, it has a toxic atmosphere of carbon dioxide with clouds of sulfuric acid, creating an extreme greenhouse effect. Surface temperatures reach a scorching 900°F (475°C), making it the hottest planet in our solar system.',
-          'Earth': 'Earth is the third planet from the Sun and the only astronomical object known to harbor life. About 71% of Earth\'s surface is covered with water, with oceans constituting about 96.5% of all Earth\'s water. The atmosphere consists of 78% nitrogen and 21% oxygen, creating the perfect conditions for life as we know it.',
-          'Mars': 'Mars is known as the Red Planet due to iron oxide (rust) on its surface. It has polar ice caps, seasons, canyons, extinct volcanoes, and evidence of ancient rivers. Scientists continue to study Mars for signs of past or present life, with various rovers and missions exploring its surface.',
-          'Jupiter': 'Jupiter is the largest planet in our solar system, with a mass more than twice that of all other planets combined. It\'s a gas giant composed mainly of hydrogen and helium, with a distinctive Great Red Spot - a giant storm that has lasted for hundreds of years. Jupiter has at least 79 moons.',
-          'Saturn': 'Saturn is famous for its spectacular ring system, composed primarily of ice particles with smaller amounts of rocky debris and dust. It\'s another gas giant with a composition similar to Jupiter. Saturn has at least 82 moons, with Titan being the largest and having its own atmosphere.',
-          'Uranus': 'Uranus is an ice giant planet with a unique feature - it rotates on its side, likely due to a massive collision in its past. This gives it extreme seasons, with each pole experiencing 42 years of continuous sunlight followed by 42 years of darkness. It has a blue-green color due to methane in its atmosphere.',
-          'Neptune': 'Neptune is the farthest planet from the Sun and another ice giant. It has the strongest winds in the solar system, reaching speeds of 1,200 mph (2,000 km/h). Its blue color comes from methane in the atmosphere. Neptune has 14 known moons, with Triton being the largest.',
-          'Pluto': 'Pluto, once considered the ninth planet, is now classified as a dwarf planet. It\'s smaller than Earth\'s moon and has a highly eccentric orbit. Pluto has a heart-shaped glacier, mountains of water ice, and a thin atmosphere that expands and contracts as it moves closer to or farther from the Sun.'
-        };
-        
-        const description = fallbackDescriptions[planetName] || `Description for ${planetName} is currently unavailable.`;
-        setPlanetDescription(description);
-      } else {
-        const data = await response.json();
-        setPlanetDescription(data.description || '');
-      }
-    } catch (error: any) {
-      console.error("Error fetching planet description:", error);
-      setDescriptionError(`Failed to load description. (${error.message})`);
-    } finally {
-      setIsDescriptionLoading(false);
-    }
-  };
-
-  const handlePlanetClick = (planet: string) => {
-    setSelectedPlanet(planet);
-    console.log(`Selected planet: ${planet}`);
-  };
+    fetchApod();
+  }, []); // Fetch only once on mount
+  // --- End useEffect ---
 
   return (
     <div className="App">
-      {selectedPlanet === null && (
-        <button
-          onClick={handleApodButtonClick}
-          disabled={isApodLoading}
-          className="generate-button"
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            zIndex: 10,
-          }}
-          title="Astronomy Picture of the Day"
-        >
-          {isApodLoading ? 'Loading...' : 'APOD'}
-        </button>
-      )}
+      {/* Restore original routing */}
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={<LoginPage />} />
 
-      <div className={`view-container ${selectedPlanet === null ? 'visible' : 'hidden'}`}>
-        <Canvas camera={{ position: [0, 10, 20], fov: 75 }}>
-          <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              {/* Restore original structure */}
+              <> {/* Use Fragment to wrap multiple elements */}
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0 }}>
+                  <SolarSystemScene onPlanetSelect={handlePlanetSelect} />
+                </div>
+                {/* --- Add APOD Button --- */}
+                <button
+                  className="apod-button"
+                  onClick={() => setShowApodModal(true)}
+                  disabled={isApodLoading || !!apodError || !apodData}
+                  title={apodError ? apodError : (apodData ? `Astronomy Picture of the Day: ${apodData.title}` : 'Loading APOD...')}
+                >
+                  {isApodLoading ? 'Loading APOD...' : (apodError ? 'APOD Error' : 'APOD')}
+                </button>
+                {/* --- End APOD Button --- */}
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/planet/:planetName"
+          element={
+            <ProtectedRoute>
+              <PlanetDetailWrapper />
+            </ProtectedRoute>
+          }
+        />
+        {/* Add other protected routes like /journal if needed */}
 
-          <ambientLight intensity={0.4} />
-          <directionalLight position={[15, 15, 8]} intensity={2.2} color="#FFF8E7" target-position={[0, 0, 0]} />
-          
-          <primitive
-              object={new THREE.HemisphereLight(
-                  0x87CEEB, // Sky Color (hex code for the blueish color we used)
-                  0x101020, // Ground Color (hex code for dark ground we used)
-                  0.3       // Intensity (same as before)
-              )}
-          />
-          
-          <SolarSystemScene onPlanetSelect={handlePlanetClick} />
-          <OrbitControls />
-        </Canvas>
-      </div>
+         {/* Restore catch-all */}
+         <Route path="*" element={<Navigate to={currentUser ? "/" : "/login"} replace />} />
 
-      {selectedPlanet !== null && (
-        <div className={`view-container ${selectedPlanet !== null ? 'visible' : 'hidden'}`}>
-          <PlanetDetailView 
-            selectedPlanet={selectedPlanet} 
-            onBack={() => setSelectedPlanet(null)}
-            onFetchPlanetInfo={fetchPlanetInfo}
-            onFetchPlanetDescription={fetchPlanetDescription}
-            onFetchNasaImages={fetchNasaImages}
-          />
+      </Routes>
+      {/* Remove the test element */}
+      {/* <h1 style={{ position: 'absolute', top: '10px', left: '10px', color: 'white', zIndex: 1 }}>TESTING</h1> */}
+
+      {/* --- Add APOD Modal --- */}
+      {showApodModal && apodData && (
+        <div className="apod-modal-overlay" onClick={() => setShowApodModal(false)}>
+          <div className="apod-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="apod-modal-close" onClick={() => setShowApodModal(false)}>×</button>
+            <h2>{apodData.title}</h2>
+            <p className="apod-modal-date">{apodData.date}{apodData.copyright ? ` - © ${apodData.copyright}` : ''}</p>
+            {apodData.media_type === 'image' ? (
+              <a href={apodData.hdurl || apodData.url} target="_blank" rel="noopener noreferrer">
+                <img src={apodData.url} alt={apodData.title} className="apod-modal-image" />
+              </a>
+            ) : (
+              <iframe
+                src={apodData.url}
+                title={apodData.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="apod-modal-video"
+              ></iframe>
+            )}
+            <p className="apod-modal-explanation">{apodData.explanation}</p>
+          </div>
         </div>
       )}
-
-      {showApodModal && apodData && (
-        <ApodModal data={apodData} onClose={() => setShowApodModal(false)} />
-      )}
+      {/* --- End APOD Modal --- */}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      {/* --- Uncomment AuthProvider --- */}
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
   );
 }
 

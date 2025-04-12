@@ -10,11 +10,8 @@
     }
   },
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" }
-  ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "source": "/api/:path*", "destination": "/api/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "env": {
     "NODE_ENV": "production"
