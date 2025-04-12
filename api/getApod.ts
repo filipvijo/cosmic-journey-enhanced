@@ -33,34 +33,40 @@ export default async function handler(_request: VercelRequest, response: VercelR
   const apiKey = process.env.NASA_API_KEY;
 
   console.log(`--- Get APOD Handler ---`);
-
+  // --- Add detailed API Key log ---
   if (!apiKey) {
-    console.error('Get APOD: NASA_API_KEY environment variable is not configured.');
-    // Ensure error response is valid JSON
+    console.error('Get APOD Error: NASA_API_KEY environment variable is MISSING or empty.');
     return response.status(500).json({ error: 'Server configuration error (Missing NASA API Key).' });
+  } else {
+    // Log only a portion to confirm it's being read, not the full key
+    console.log(`Get APOD Info: NASA_API_KEY is present (starts with: ${apiKey.substring(0, 4)}...).`);
   }
+  // --- End log ---
 
   const nasaApiUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}`;
 
   try {
-    console.log(`Get APOD: Fetching data from NASA APOD API: ${nasaApiUrl}`);
-    // Use global fetch directly
+    console.log(`Get APOD Info: Attempting to fetch from NASA APOD API: ${nasaApiUrl.replace(apiKey, '***')}`); // Hide key in log
     const apiResponse = await fetch(nasaApiUrl);
+    console.log(`Get APOD Info: Received response from NASA API. Status: ${apiResponse.status}`); // Log status
 
     if (!apiResponse.ok) {
-      const errorBody = await apiResponse.text(); // Get error as text first
-      console.error("Get APOD: NASA API request failed:", apiResponse.status, apiResponse.statusText, errorBody);
-      // Ensure error response is valid JSON
+      const errorBody = await apiResponse.text();
+      // --- Add detailed API failure log ---
+      console.error(`Get APOD Error: NASA API request failed with status ${apiResponse.status}. Body:`, errorBody);
+      // --- End log ---
       return response.status(apiResponse.status).json({
         error: `NASA APOD API request failed: ${apiResponse.status} ${apiResponse.statusText}`,
-        details: errorBody // Include details if possible
+        details: errorBody
       });
     }
 
+    // --- Add log before parsing JSON ---
+    console.log(`Get APOD Info: Attempting to parse NASA API response as JSON.`);
     const data = await apiResponse.json() as ApodResponse;
-    console.log(`Get APOD: Successfully fetched APOD data for ${data.date}`);
+    console.log(`Get APOD Info: Successfully parsed JSON. APOD data for ${data.date}`);
+    // --- End log ---
 
-    // Return only necessary fields
     const relevantData = {
         title: data.title,
         explanation: data.explanation,
@@ -71,18 +77,17 @@ export default async function handler(_request: VercelRequest, response: VercelR
         copyright: data.copyright
     };
 
-    // Set cache headers for Vercel
-    response.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=59'); // Cache for 1 hour
-
+    response.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=59');
+    console.log(`Get APOD Info: Sending successful response.`); // Log success
     return response.status(200).json(relevantData);
 
   } catch (error: any) {
-    // Log the specific error causing the 500
-    console.error(`Get APOD: Uncaught error fetching APOD data:`, error);
-    // Ensure error response is valid JSON
+    // --- Add detailed catch block log ---
+    console.error(`Get APOD Error: Uncaught error during execution.`, error);
+    // --- End log ---
     return response.status(500).json({
         error: `Failed to fetch APOD data: ${error.message}`,
-        details: error.stack // Include stack trace for debugging if desired
+        details: error.stack
     });
   }
 }
