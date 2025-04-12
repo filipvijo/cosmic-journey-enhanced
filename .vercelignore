@@ -4,7 +4,6 @@ node_modules
 
 # Ignore the TS source files for API routes to avoid conflict
 # Vercel should run the .js files compiled by the vercel-build script
-api/**/*.ts
 
 # ... other ignores ...
 
