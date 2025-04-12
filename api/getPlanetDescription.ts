@@ -1,18 +1,6 @@
 // Log AFTER attempting manual load
 console.log("--- All Environment Variables (After Manual dotenv Load) ---", process.env);
 
-// Add these interfaces near the top
-interface OpenAIChatChoice {
-  message?: {
-    content?: string | null;
-  } | null;
-}
-
-interface OpenAIChatResponse {
-  choices?: OpenAIChatChoice[] | null;
-  error?: { message: string; type: string }; // Include error field potentially
-}
-
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {

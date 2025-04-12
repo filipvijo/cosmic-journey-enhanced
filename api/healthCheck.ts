@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // Health check endpoint to verify API functionality and environment variables
-export default async function handler(request: VercelRequest, response: VercelResponse) {
+export default async function handler(_request: VercelRequest, response: VercelResponse) {
   const apiEndpoints = [
     { name: 'getPlanetInfo', path: '/api/getPlanetInfo?planet=mars', description: 'Get basic information about a planet' },
     { name: 'getPlanetDescription', path: '/api/getPlanetDescription?planet=mars', description: 'Get detailed description of a planet' },

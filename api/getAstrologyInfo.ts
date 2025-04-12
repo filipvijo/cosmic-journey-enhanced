@@ -7,17 +7,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 interface OpenAIChatChoice {
     message?: { content?: string | null };
 }
-interface OpenAIResponse {
-    choices?: OpenAIChatChoice[];
-    error?: { message: string };
-}
-
-// Define the type for astrological information
-interface AstrologyInfo {
-  meaning: string;
-  traits: string[];
-  compatibility: string[];
-}
 
 // Handler function for the API endpoint
 export default async function handler(request: VercelRequest, response: VercelResponse) {

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default async function handler(request: VercelRequest, response: VercelResponse) {
+export default async function handler(_request: VercelRequest, response: VercelResponse) {
   // Simple health check endpoint
   response.status(200).json({ 
     status: 'ok',

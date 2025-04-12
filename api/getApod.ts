@@ -8,15 +8,15 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // Ensure environment variables are loaded (Removed dotenv.config())
 
 // Define the APOD data interface for type safety
-interface ApodData {
-  title: string;
-  explanation: string;
-  date: string;
-  url: string;
-  hdurl?: string;
-  media_type: 'image' | 'video';
-  copyright?: string;
-}
+// interface ApodData {
+//   title: string;
+//   explanation: string;
+//   date: string;
+//   url: string;
+//   hdurl?: string;
+//   media_type: 'image' | 'video';
+//   copyright?: string;
+// }
 
 interface ApodResponse {
   copyright?: string;
@@ -29,7 +29,7 @@ interface ApodResponse {
   url: string;
 }
 
-export default async function handler(request: VercelRequest, response: VercelResponse) {
+export default async function handler(_request: VercelRequest, response: VercelResponse) {
   const apiKey = process.env.NASA_API_KEY;
 
   console.log(`--- Get APOD Handler ---`);
