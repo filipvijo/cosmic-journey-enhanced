@@ -16,5 +16,5 @@
     "resolveJsonModule": true // Allow importing JSON files
   },
   "include": ["api/**/*.ts"], // Include only your API source files
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "api/server.ts"]
 }
