@@ -1,24 +1,20 @@
 {
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "target": "ES2022",
-    "lib": ["ES2023"],
-    "module": "CommonJS",
+    "composite": true, // Often used in monorepo setups or with tsconfig.json referencing this
     "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "Node",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    // --- Key Settings for Node.js ESM ---
+    "target": "ES2020", // Target modern ES features
+    "module": "NodeNext", // Use Node.js's modern module system resolution
+    "moduleResolution": "NodeNext", // Align module resolution
+    "outDir": "dist-api", // Separate output directory for API code (optional but clean)
+    "rootDir": "api", // Specify the root of your API source files
+    // --- End Key Settings ---
+    "esModuleInterop": true, // Allows default imports from CommonJS modules
+    "forceConsistentCasingInFileNames": true,
+    "strict": true, // Enable strict type checking
+    "sourceMap": true, // Generate source maps for debugging
+    "resolveJsonModule": true // Allow importing JSON files
   },
-  "include": ["vite.config.ts"]
+  "include": ["api/**/*.ts"], // Include only your API source files
+  "exclude": ["node_modules"]
 }
