@@ -1,3 +1,27 @@
 README.md
 node_modules
 .git
+
+# Ignore compiled JS/Map files in the API directory during Vercel deployment
+api/**/*.js
+api/**/*.js.map
+
+# Ignore node_modules
+node_modules
+
+# Ignore build output if not needed by Vercel (Vercel usually builds itself)
+dist
+build
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore Git directory
+.git
+
+# Ignore IDE/OS files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
