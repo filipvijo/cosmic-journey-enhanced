@@ -1,5 +1,5 @@
-// Use require for Vercel types
-const { VercelRequest, VercelResponse } = require('@vercel/node');
+// Use import for Vercel types
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 interface NASAImage {
     url: string;
@@ -18,8 +18,8 @@ interface NasaApiItem {
     links?: { href?: string }[];
 }
 
-// Use module.exports for the handler
-module.exports = async (request: typeof VercelRequest, response: typeof VercelResponse) => {
+// Use export default for the handler
+export default async (request: VercelRequest, response: VercelResponse) => {
     const { planet } = request.query;
     const apiKey = process.env.NASA_API_KEY;
 

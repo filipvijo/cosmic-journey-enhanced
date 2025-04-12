@@ -1,7 +1,7 @@
-// Use require for Vercel types
-const { VercelRequest, VercelResponse } = require('@vercel/node');
-// Use require for fal client
-const fal = require('@fal-ai/serverless-client');
+// Use import for Vercel types
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+// Use import for fal client
+import fal from '@fal-ai/serverless-client';
 
 interface SpeciesInfo {
     category: 'Micro-organism' | 'Animal' | 'Humanoid';
@@ -20,8 +20,8 @@ interface OpenAIResponse {
 
 interface FalSubscribeInput {
     prompt: string;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
 }
 
 interface FalResponse {
@@ -49,8 +49,8 @@ if (process.env.FAL_KEY) {
     console.log('Fal.ai client initialized with API key');
 }
 
-// Use module.exports for the handler
-module.exports = async (request: typeof VercelRequest, response: typeof VercelResponse) => {
+// Use export default for the handler
+export default async (request: VercelRequest, response: VercelResponse) => {
     const { planet } = request.query;
     const openAIApiKey = process.env.OPENAI_API_KEY;
 
