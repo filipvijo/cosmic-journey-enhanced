@@ -3,11 +3,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // --- Keep dotenv workaround for local dev ---
 
-// OpenAI response type (optional but helpful)
-interface OpenAIChatChoice {
-    message?: { content?: string | null };
-}
-
 // Handler function for the API endpoint
 export default async function handler(request: VercelRequest, response: VercelResponse) {
     const { planet } = request.query;
