@@ -2,9 +2,15 @@ README.md
 node_modules
 .git
 
+# Ignore the TS source files for API routes to avoid conflict
+# Vercel should run the .js files compiled by the vercel-build script
+api/**/*.ts
+
+# ... other ignores ...
+
 # Ignore compiled JS/Map files in the API directory during Vercel deployment
-api/**/*.js
-api/**/*.js.map
+# api/**/*.js # Keep commented/removed - Vercel needs the JS files now
+# api/**/*.js.map
 
 # Ignore node_modules
 node_modules
@@ -25,3 +31,6 @@ build
 .idea
 .DS_Store
 Thumbs.db
+
+# Other ignores if needed
+README.md

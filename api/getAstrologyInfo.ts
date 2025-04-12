@@ -1,10 +1,10 @@
-// Use 'any' for request/response types to avoid Vercel deployment issues
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+// Use require for Vercel types
+const { VercelRequest, VercelResponse } = require('@vercel/node');
 
 // --- Keep dotenv workaround for local dev ---
 
-// Handler function for the API endpoint
-export default async function handler(request: VercelRequest, response: VercelResponse) {
+// Handler function for the API endpoint using module.exports
+module.exports = async (request: typeof VercelRequest, response: typeof VercelResponse) => {
     const { planet } = request.query;
     const apiKey = process.env.OPENAI_API_KEY;
 
@@ -55,4 +55,4 @@ export default async function handler(request: VercelRequest, response: VercelRe
             error: error.message || 'Internal server error while fetching astrological information'
         });
     }
-}
+};

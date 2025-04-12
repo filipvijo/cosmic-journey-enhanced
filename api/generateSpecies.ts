@@ -1,5 +1,7 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import * as fal from '@fal-ai/serverless-client';
+// Use require for Vercel types
+const { VercelRequest, VercelResponse } = require('@vercel/node');
+// Use require for fal client
+const fal = require('@fal-ai/serverless-client');
 
 interface SpeciesInfo {
     category: 'Micro-organism' | 'Animal' | 'Humanoid';
@@ -47,7 +49,8 @@ if (process.env.FAL_KEY) {
     console.log('Fal.ai client initialized with API key');
 }
 
-export default async function handler(request: VercelRequest, response: VercelResponse) {
+// Use module.exports for the handler
+module.exports = async (request: typeof VercelRequest, response: typeof VercelResponse) => {
     const { planet } = request.query;
     const openAIApiKey = process.env.OPENAI_API_KEY;
 
@@ -255,4 +258,4 @@ export default async function handler(request: VercelRequest, response: VercelRe
             error: `Internal Server Error during species image generation: ${error.message}`
         });
     }
-}
+};

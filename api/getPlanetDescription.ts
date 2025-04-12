@@ -1,9 +1,8 @@
-// Log AFTER attempting manual load
-console.log("--- All Environment Variables (After Manual dotenv Load) ---", process.env);
+// Use require for Vercel types
+const { VercelRequest, VercelResponse } = require('@vercel/node');
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-export default async function handler(request: VercelRequest, response: VercelResponse) {
+// Use module.exports for the handler
+module.exports = async (request: typeof VercelRequest, response: typeof VercelResponse) => {
   const { planet } = request.query;
   const apiKey = process.env.OPENAI_API_KEY;
 
@@ -54,4 +53,4 @@ export default async function handler(request: VercelRequest, response: VercelRe
       error: error.message || 'Internal server error while fetching planet description'
     });
   }
-}
+};

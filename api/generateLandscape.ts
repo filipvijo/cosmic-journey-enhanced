@@ -1,5 +1,7 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import * as fal from '@fal-ai/serverless-client'; 
+// Use require for Vercel types
+const { VercelRequest, VercelResponse } = require('@vercel/node');
+// Use require for fal client
+const fal = require('@fal-ai/serverless-client');
 
 // Ensure FAL_KEY is handled if needed, though fal library might handle it implicitly via env
 if (!process.env.FAL_KEY) {
@@ -36,7 +38,8 @@ interface FalQueueUpdate {
     // Add other potential fields from the update object if known
 }
 
-export default async function handler(request: VercelRequest, response: VercelResponse) { 
+// Use module.exports for the handler
+module.exports = async (request: typeof VercelRequest, response: typeof VercelResponse) => {
     const { planet } = request.query;
     // Fal client uses FAL_KEY from environment automatically if configured correctly
     // const apiKey = process.env.FAL_KEY;
@@ -123,4 +126,4 @@ export default async function handler(request: VercelRequest, response: VercelRe
         const errorMessage = error.message || 'An unknown error occurred';
         return response.status(500).json({ error: `Internal Server Error generating landscape: ${errorMessage}` });
     }
-}
+};

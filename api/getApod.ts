@@ -1,9 +1,7 @@
-// api/getApod.ts
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-// Remove dotenv - Vercel handles environment variables
-// import dotenv from 'dotenv';
-// Use global fetch if available in Vercel runtime, remove node-fetch import if not needed
-// import fetch from 'node-fetch';
+// Use require for Vercel types
+const { VercelRequest, VercelResponse } = require('@vercel/node');
+
+// Keep fetch as global
 
 // Ensure environment variables are loaded (Removed dotenv.config())
 
@@ -29,7 +27,8 @@ interface ApodResponse {
   url: string;
 }
 
-export default async function handler(_request: VercelRequest, response: VercelResponse) {
+// Use module.exports for the handler
+module.exports = async (_request: typeof VercelRequest, response: typeof VercelResponse) => {
   const apiKey = process.env.NASA_API_KEY;
 
   console.log(`--- Get APOD Handler ---`);
@@ -90,4 +89,4 @@ export default async function handler(_request: VercelRequest, response: VercelR
         details: error.stack
     });
   }
-}
+};
